@@ -8,18 +8,18 @@
 
 - Khi xem source code thì tôi thấy rằng chall có lỗi Buffer Overflow ở ngay lúc <SYS_write> *
 - Và sau khi debug, tôi tìm thấy được ở _start+39, ecx được truyền địa chỉ stack từ esp *
-=> Có thể overwrite địa chỉ return trong stack thành địa chỉ của _start+39 để leak địa chỉ stack
-=> Có thể đẩy shellcode vào và dùng execve để lấy shell và đọc flag
+> Có thể overwrite địa chỉ return trong stack thành địa chỉ của _start+39 để leak địa chỉ stack
+> Có thể đẩy shellcode vào và dùng execve để lấy shell và đọc flag
 
 ## Quá trình
 
 - Từ địa chỉ return, tôi thấy có 20 bytes => Đẩy 20 bytes rác vào payload để chèn địa chỉ _start+39 đè return
 - Sau khi leak được dữ liệu thì thấy rằng đây là địa chỉ trên stack
-=> Viết shellcode và đẩy vào để lấy được shell
+> Viết shellcode và đẩy vào để lấy được shell
 
 ## Script
 
-'''
+```
 #!/usr/bin/env python3
 
 from pwn import *
@@ -74,5 +74,6 @@ payload2 = b'A'*20 + p32(stack_leak + 20) + shellcode
 s(payload2)
 
 p.interactive()
-'''
+```
+
 
