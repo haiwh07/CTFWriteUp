@@ -1,7 +1,7 @@
 # Write Up Pwnable: Challenge START
 
 ## Vấn đề
-* [File challenge](https://github.com/haiwh07/CTFWriteUp/blob/main/start)
+* [File challenge](https://github.com/haiwh07/CTFWriteUp/blob/main/StartChallenge/start)
 - Sau khi checksec file: Phát hiện ra tất cả đều tắt, và file chỉ có phần nhập sau khi chương trình push xong. Sau đó exit.
 
 ## Giải pháp
