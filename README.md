@@ -8,8 +8,7 @@
 
 - Khi xem source code thì tôi thấy rằng chall có lỗi Buffer Overflow ở ngay lúc <SYS_write> *
 - Và sau khi debug, tôi tìm thấy được ở _start+39, ecx được truyền địa chỉ stack từ esp *
-> Có thể overwrite địa chỉ return trong stack thành địa chỉ của _start+39 để leak địa chỉ stack
-> Có thể đẩy shellcode vào và dùng execve để lấy shell và đọc flag
+> Có thể overwrite địa chỉ return trong stack thành địa chỉ của _start+39 để leak địa chỉ stack => Có thể đẩy shellcode vào và dùng execve để lấy shell và đọc flag
 
 ## Quá trình
 
