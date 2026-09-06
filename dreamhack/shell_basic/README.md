@@ -1,6 +1,7 @@
 # CHALLENGE: Shell Basic
 
 ## Vấn đề
+[- File challenge](https://github.com/haiwh07/CTFWriteUp/blob/main/dreamhack/shell_basic/shell_basic)
 - Chỉ cần viết shellcode đọc flag ở /home/shell_basic/flag_name_is_loooooong là xong.
 
 ## Giải pháp
