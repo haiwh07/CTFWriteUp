@@ -1,4 +1,4 @@
-# Write Up Pwnable: Challenge START
+# Challenge: START
 
 ## Vấn đề
 * [File challenge](https://github.com/haiwh07/CTFWriteUp/blob/main/StartChallenge/start)
