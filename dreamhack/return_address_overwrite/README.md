@@ -4,12 +4,14 @@
 - [File challenge](https://github.com/haiwh07/CTFWriteUp/blob/main/dreamhack/return_address_overwrite/rao)
 - Khi thực thi, chương trình kêu user nhập input bằng hàm scanf và sau đó exit.
 - Checksec:
+```
 + Arch:       amd64-64-
 + RELRO:      Partial RELRO
 + Stack:      No canary found
 + NX:         NX enabled
 + PIE:        No PIE (0x400000)
 + Stripped:   No
+```
 
 ## Giải pháp
 - Khi check trong ida, tôi thấy hàm get_shell() chứa execve("/bin/sh", 0, 0).
