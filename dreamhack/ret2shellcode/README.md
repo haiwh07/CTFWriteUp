@@ -29,7 +29,8 @@
 - Viết shellcode: execve("/bin/sh", 0, 0).
 > Payload = shellcode.ljust(0x58, b'A') + canary_leak + 8 bytes rác (saved rbp) + địa chỉ buf đã leak
 ```
-* Lưu ý: Vì canary sẽ kiểm tra nếu canary lúc check với canary gốc khác thì chương trình sẽ bị dừng ngay lập tức, do đó phải xem xét kỹ nên overwrite 1 byte như bài này để leak hay ko. Nếu ko thể thì buộc phải tìm cách khác.
+* Lưu ý: Vì canary sẽ kiểm tra nếu canary lúc check với canary gốc khác thì chương trình sẽ bị dừng ngay lập tức, do đó phải xem xét kỹ nên overwrite 1 byte như bài này để leak hay ko.
+=> Nếu ko thể thì buộc phải tìm cách khác.
 ```
 
 ## Script
