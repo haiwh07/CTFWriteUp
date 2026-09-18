@@ -91,7 +91,7 @@ system_addr = libc.address + 0x4f550
 ```
 binsh_addr = libc.address + 0x1b3e1a
 ```
-> Đẩy free(x) vào thì chương trình sẽ thực thi [__free_hook](x) tức là system("/bin/sh") và ta sẽ có được shell.
+> Đẩy free(x) vào thì chương trình sẽ thực thi [__free_hook] (x) tức là system("/bin/sh") và ta sẽ có được shell.
 
 ## Script
 ```
