@@ -110,7 +110,7 @@ pwndbg> x/20xg 0x0000000000600fa0
 ```
 > Do stdout có chứa libc nên tôi dùng nó để leak.
 - Đầu tiên cần thực thi Double Free bug trước rồi sau đó dùng hàm edit để overwrite heap chunk thành stdout (vì PIE tắt nên có thể dùng exe.sym['...']) bằng kỹ thuật _Tcache Poisoning_. Vì chương trình có thể khai thác Double Free mà cùng với đó chương trình có thể edit heap chunk lúc nó đang trong bins, vậy nên Tcache Poisoning ra đời.
-> **Lưu ý:** Ở phần tạo malloc(1, b'') vì read(0, buf, size - 1) nên khi ta tạo malloc với size là 1 lúc này read sẽ là read(0), do đó khi tạo xong malloc nó không cần phải chờ nhận bất kì bytes nào để có thể chạy lệnh tiếp theo (tránh gặp lỗi **vfprintf**). Nếu tạo malloc_size > 1 lúc này sẽ gặp bug vừa nêu trước đó, và chương trình sẽ crash.
+> **Lưu ý:** Ở phần tạo malloc(1, b'') vì read(0, buf, size - 1) nên khi ta tạo malloc với size là 1 lúc này read sẽ là read(0), do đó khi tạo xong malloc nó không cần phải chờ nhận bất kì bytes nào để có thể chạy lệnh tiếp theo (tránh gặp lỗi **[vfprintf](https://stackoverflow.com/questions/24922735/file-pointer-set-to-null-after-fprintf)** do địa chỉ cần đọc NULL). Nếu tạo malloc_size > 1 lúc này sẽ gặp bug vừa nêu trước đó, và chương trình sẽ crash.
 ```
 # Double free
 allocate(16, b'AAAA')
@@ -130,7 +130,7 @@ info("Libc leak: " + hex(libc_leak))
 info("Libc base: " + hex(libc.address))
 ```
 - Tiếp theo việc ta cần làm lúc này là tạo một malloc khác size với malloc trước đó để có thể khai thác lại Double Free. Nắm bắt thời cơ, ta tạo malloc kèm địa chỉ __free_hook để khi mà Double Free xong ta sẽ thay địa chỉ buf ở đầu thành __free_hook luôn.
-> **Ghi chú:** Nếu tạo malloc cùng size và giá trị vào sẽ gặp lỗi **munmap_chunk() invalid pointer** bởi vì trước đó ta đã thay đổi buf thành một giá trị ngoài heap do đó khi thực ta sẽ gặp lỗi.
+> **Ghi chú:** Nếu tạo malloc cùng size và giá trị vào sẽ gặp lỗi **[munmap_chunk() invalid pointer](https://stackoverflow.com/questions/32118545/munmap-chunk-invalid-pointer)** bởi vì trước đó ta đã thay đổi buf thành một giá trị ngoài heap do đó khi thực ta sẽ gặp lỗi.
 ```
 allocate(200, p64(libc.sym['__free_hook']))
 allocate(200, b'CCCC')
