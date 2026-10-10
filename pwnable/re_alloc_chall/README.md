@@ -140,7 +140,7 @@ int rfree()
 + Stripped:   No
 ```
 
-## Vấn đề
+## Giải pháp
 - Chương trình có hàm tạo alloc (tạo một chunk heap), realloc (để thay đổi kích thước và data của heap *có một thứ lưu ý là khi realloc(0) nó đồng nghĩa là free(0) nó đẩy chunk vào bins nhưng không đổi địa chỉ thành NULL) và free (đưa chunk heap vào bins và *chunk trả về NULL).
 - Vấn đề mảng heap này chỉ được tạo tối đa 2 chunk và size < 0x78. Do đó, ta cần đánh lừa alloc bằng realloc(0) để Double Free và khai thác Tcache Poisoning rồi overwrite địa chỉ nào đó thành địa chỉ có thể lấy shell.
 - Khi xem qua ida, tôi thấy chẳng có hàm nào có thể tận dụng lấy shell được do đó check qua libc xem có hàm nào không, thì tôi thấy có hàm system.
