@@ -44,6 +44,36 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 ## Quá trình
 - Thì để có thể tạo vòng lặp cho chương trình nó liên quan đến .fini_array mà qua bài [write up](https://github.com/smokeleeteveryday/CTF_WRITEUPS/tree/master/2016/CODEGATE/pwnable/oldschool) đã giải thích. Nói tóm gọn là khi chương trình chạy xong hàm main() không phải là kết thúc ngay lặp tức mà nó sẽ thực thi tiếp libc_start_main() chứa hàm main(), sau khi hàm libc_start_main() chạy đến exit() cuối cùng chương trình sẽ thực thi .fini_array trong đó nó chứa các lệnh kết thúc chương trình. Một kiến thức ngoài lề là trước khi chạy hàm main() chương trình thực thi .init_array trong đó sẽ chứa các lệnh khai báo biến giúp chương trình có thể thực thi và sau đó mới chạy hàm main(). Từ đó, ta hiểu là chương trình thực thi không phải chạy xong mỗi main() là hết mà nó còn chạy các file khác nữa.
 > Tận dụng .fini_array ta sẽ gắn địa chỉ main() vào .fini_array để khi main() vừa kết thúc chạy .fini_array nó sẽ thực thi lại hàm main() lần nữa.
+- Nhưng trong ida .fini_array có địa chỉ là 0x4B40F0 đây không phải là nơi thực thi .fini_array, ta cần tìm tới hàm thực thi .fini_array lúc đó ta mới overwrite hàm đó thành hàm main() để tạo vòng lặp.
+```
+.fini_array:00000000004B40F0 ; ===========================================================================
+.fini_array:00000000004B40F0
+.fini_array:00000000004B40F0 ; Segment type: Pure data
+.fini_array:00000000004B40F0 ; Segment permissions: Read/Write
+.fini_array:00000000004B40F0 _fini_array     segment qword public 'DATA' use64
+.fini_array:00000000004B40F0                 assume cs:_fini_array
+.fini_array:00000000004B40F0                 ;org 4B40F0h
+.fini_array:00000000004B40F0 off_4B40F0      dq offset sub_401B00    ; DATA XREF: sub_4028D0+4C↑o
+.fini_array:00000000004B40F0                                         ; sub_402960+8↑o
+.fini_array:00000000004B40F8                 dq offset sub_401580
+.fini_array:00000000004B40F8 _fini_array     ends
+.fini_array:00000000004B40F8
+```
+- Nhìn vào ida ta, chương trình báo là ở sub_402960+8↑o là nơi thực thi hàm .fini_array, do đó ta sẽ gắn địa chỉ 0x402960 thành địa chỉ hàm main() tại 0x401B6D.
+```
+.text:0000000000402960 sub_402960      proc near               ; DATA XREF: start+F↑o
+.text:0000000000402960 ; __unwind {
+.text:0000000000402960                 push    rbp
+.text:0000000000402961                 lea     rax, unk_4B4100
+.text:0000000000402968                 lea     rbp, off_4B40F0
+.text:000000000040296F                 push    rbx
+.text:0000000000402970                 sub     rax, rbp
+.text:0000000000402973                 sub     rsp, 8
+.text:0000000000402977                 sar     rax, 3
+.text:000000000040297B                 jz      short loc_402996
+.text:000000000040297D                 lea     rbx, [rax-1]
+.text:0000000000402981                 nop     dword ptr [rax+00000000h]
+```
 - Khi đã tạo được vòng lặp vô tận của chương trình ta sẽ gắn lần lượt ROPgadget tạo thành execve("/bin/sh", 0, 0) và sau đó trả lại địa chỉ ret của main() nó sẽ thực thi execve("/bin/sh", 0, 0) và ta sẽ có shell.
 
 ## Script
